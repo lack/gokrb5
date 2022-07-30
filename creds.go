@@ -5,6 +5,7 @@ import "C"
 
 import (
 	"runtime"
+	"time"
 )
 
 type Creds struct {
@@ -35,6 +36,33 @@ func (c *Creds) free() {
 
 func (c *Creds) StartTime() int32 {
 	return int32(c.p.times.starttime)
+}
+
+func (c *Creds) Start() time.Time {
+	return time.Unix(int64(c.StartTime()), 0)
+}
+
+func (c *Creds) EndTime() int32 {
+	return int32(c.p.times.endtime)
+}
+
+func (c *Creds) End() time.Time {
+	return time.Unix(int64(c.EndTime()), 0)
+}
+
+func (c *Creds) RenewUntilTime() int32 {
+	return int32(c.p.times.renew_till)
+}
+
+func (c *Creds) RenewUntil() time.Time {
+	return time.Unix(int64(c.RenewUntilTime()), 0)
+}
+
+func (c *Creds) Expired() bool {
+	if c.StartTime() == 0 {
+		return false
+	}
+	return time.Now().After(c.End())
 }
 
 func (c *Creds) Server() (*Principal, error) {
