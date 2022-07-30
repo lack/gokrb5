@@ -88,3 +88,35 @@ func (p *CCache) EndSeqGet(cursor *CCacheCursor) (err error) {
 	}
 	return
 }
+
+func (p *CCache) FindTgt() (*Creds, error) {
+	principal, err := p.GetPrincipal()
+	if err != nil {
+		return nil, err
+	}
+
+	i, err := p.StartSeqGet()
+	if err != nil {
+		return nil, err
+	}
+	defer p.EndSeqGet(i)
+
+	var cred *Creds
+	for {
+		cred, err = p.NextCred(i)
+		if err != nil {
+			return nil, err
+		}
+		if cred == nil {
+			break
+		}
+		isLocalTgt, err := cred.IsLocalTgt(principal.Realm())
+		if err != nil {
+			return nil, err
+		}
+		if isLocalTgt {
+			break
+		}
+	}
+	return cred, nil
+}

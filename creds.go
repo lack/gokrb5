@@ -82,3 +82,18 @@ func (c *Creds) Client() (*Principal, error) {
 	}
 	return newPrincipalFromC(c.c, cp), nil
 }
+
+func (c *Creds) IsLocalTgt(realm string) (bool, error) {
+	srvPrincipal, err := c.Server()
+	if err != nil {
+		return false, err
+	}
+	srvName := srvPrincipal.Name()
+	if len(srvName) == 2 &&
+		srvPrincipal.Realm() == realm &&
+		srvName[0] == "krbtgt" &&
+		srvName[1] == realm {
+		return true, nil
+	}
+	return false, nil
+}
