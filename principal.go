@@ -70,8 +70,10 @@ func newPrincipalFromC(c *Context, p C.krb5_principal) *Principal {
 }
 
 func (p *Principal) free() {
-	C.krb5_free_principal(p.c.toC(), p.p)
-	p.p = nil
+	if p.p != nil {
+		C.krb5_free_principal(p.c.toC(), p.p)
+		p.p = nil
+	}
 }
 
 func (kc *Context) ParseName(name string) (*Principal, error) {

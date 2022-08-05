@@ -56,13 +56,17 @@ func newAuthenticatorFromC(c *Context, p *C.krb5_authenticator) *Authenticator {
 }
 
 func (p *AuthContext) free() {
-	C.krb5_auth_con_free(p.c.toC(), p.p)
-	p.p = nil
+	if p.p != nil {
+		C.krb5_auth_con_free(p.c.toC(), p.p)
+		p.p = nil
+	}
 }
 
 func (p *Authenticator) free() {
-	C.krb5_free_authenticator(p.c.toC(), p.p)
-	p.p = nil
+	if p.p != nil {
+		C.krb5_free_authenticator(p.c.toC(), p.p)
+		p.p = nil
+	}
 }
 
 func (kc *Context) NewAuthContext() (*AuthContext, error) {

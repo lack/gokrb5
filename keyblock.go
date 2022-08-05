@@ -19,8 +19,10 @@ func newKeyblockFromC(c *Context, p *C.krb5_keyblock) *Keyblock {
 }
 
 func (p *Keyblock) free() {
-	C.krb5_free_keyblock(p.c.toC(), p.p)
-	p.p = nil
+	if p.p != nil {
+		C.krb5_free_keyblock(p.c.toC(), p.p)
+		p.p = nil
+	}
 }
 
 func (p *Keyblock) Copy() (*Keyblock, error) {

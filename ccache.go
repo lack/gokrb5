@@ -21,8 +21,10 @@ func newCCacheFromC(c *Context, p C.krb5_ccache) *CCache {
 }
 
 func (p *CCache) Close() {
-	C.krb5_cc_close(p.c.toC(), p.p)
-	p.p = nil
+	if p.p != nil {
+		C.krb5_cc_close(p.c.toC(), p.p)
+		p.p = nil
+	}
 }
 
 func (kc *Context) CcDefault() (*CCache, error) {

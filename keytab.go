@@ -22,8 +22,10 @@ func newKeytabFromC(c *Context, p C.krb5_keytab) *Keytab {
 }
 
 func (p *Keytab) Close() {
-	C.krb5_kt_close(p.c.toC(), p.p)
-	p.p = nil
+	if p.p != nil {
+		C.krb5_kt_close(p.c.toC(), p.p)
+		p.p = nil
+	}
 }
 
 func (kc *Context) KtResolve(name string) (*Keytab, error) {

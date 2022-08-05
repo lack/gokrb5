@@ -26,12 +26,16 @@ func newCredsFromGo(c *Context, p *C.krb5_creds) *Creds {
 }
 
 func (c *Creds) freeContents() {
-	C.krb5_free_cred_contents(c.c.toC(), c.p)
+	if c.p != nil {
+		C.krb5_free_cred_contents(c.c.toC(), c.p)
+	}
 }
 
 func (c *Creds) free() {
-	C.krb5_free_creds(c.c.toC(), c.p)
-	c.p = nil
+	if c.p != nil {
+		C.krb5_free_creds(c.c.toC(), c.p)
+		c.p = nil
+	}
 }
 
 func (c *Creds) StartTime() int32 {

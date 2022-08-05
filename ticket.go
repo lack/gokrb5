@@ -35,8 +35,10 @@ func newTicketFromC(c *Context, p *C.krb5_ticket) *Ticket {
 }
 
 func (p *Ticket) free() {
-	C.krb5_free_ticket(p.c.toC(), p.p)
-	p.p = nil
+	if p.p != nil {
+		C.krb5_free_ticket(p.c.toC(), p.p)
+		p.p = nil
+	}
 }
 
 func (kc *Context) DecodeTicket(data []byte) (*Ticket, error) {

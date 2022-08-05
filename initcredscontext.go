@@ -37,8 +37,10 @@ func newInitCredsContextFromC(c *Context, p C.krb5_init_creds_context) *InitCred
 }
 
 func (p *InitCredsContext) free() {
-	C.krb5_init_creds_free(p.c.toC(), p.p)
-	p.p = nil
+	if p.p != nil {
+		C.krb5_init_creds_free(p.c.toC(), p.p)
+		p.p = nil
+	}
 }
 
 func (kc *Context) NewInitCredsContext(client *Principal) (*InitCredsContext, error) {

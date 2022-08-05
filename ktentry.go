@@ -26,13 +26,17 @@ func newKeytabEntryFromGo(c *Context, p *C.krb5_keytab_entry) *KeytabEntry {
 }
 
 func (p *KeytabEntry) free() {
-	C.krb5_free_keytab_entry_contents(p.c.toC(), p.p)
-	C.free(unsafe.Pointer(p.p))
-	p.p = nil
+	if p.p != nil {
+		C.krb5_free_keytab_entry_contents(p.c.toC(), p.p)
+		C.free(unsafe.Pointer(p.p))
+		p.p = nil
+	}
 }
 
 func (p *KeytabEntry) freeContents() {
-	C.krb5_free_keytab_entry_contents(p.c.toC(), p.p)
+	if p.p != nil {
+		C.krb5_free_keytab_entry_contents(p.c.toC(), p.p)
+	}
 }
 
 func (p *KeytabEntry) Principal() (*Principal, error) {
